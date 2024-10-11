@@ -13,6 +13,9 @@ fi
 cp "/usr/share/zoneinfo/$TZ" /etc/localtime
 echo "$TZ" > /etc/timezone
 
+#Make cgi-tmp directory before setting permissions
+mkdir /var/lib/munin/cgi-tmp
+
 # Fix ownership
 chown munin:munin \
   /var/log/munin /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
