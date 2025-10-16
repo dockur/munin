@@ -1,6 +1,0 @@
-{
-  "name": "munin",
-  "service": "munin",
-  "forwardPorts": [80],
-  "dockerComposeFile": "compose.yml"
-}

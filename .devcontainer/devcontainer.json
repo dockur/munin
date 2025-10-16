@@ -1,0 +1,15 @@
+{
+  "name": "Munin",
+  "service": "munin",
+  "forwardPorts": [80],  
+  "portsAttributes": {
+    "80": {
+      "label": "Web",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  }, 
+  "dockerComposeFile": "codespaces.yml"
+}
