@@ -1,0 +1,16 @@
+services:
+  munin:
+    image: dockurr/munin
+    container_name: munin
+    environment:
+      TZ: "Europe/Berlin"
+      NODES: "node1:10.0.0.101 node2:10.0.0.102"
+    ports:
+      - 80:80
+    volumes:
+      - ./lib:/var/lib/munin
+      - ./log:/var/log/munin
+      - ./conf:/etc/munin/munin-conf.d
+      - ./plugin:/etc/munin/plugin-conf.d
+    restart: on-failure
+    stop_grace_period: 1m
