@@ -1,7 +1,7 @@
 services:
   munin:
-    image: dockurr/munin
     container_name: munin
+    image: ghcr.io/dockur/munin
     environment:
       TZ: "Europe/Berlin"
       NODES: "node1:10.0.0.101 node2:10.0.0.102"
