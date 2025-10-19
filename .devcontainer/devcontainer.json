@@ -1,6 +1,7 @@
 {
   "name": "Munin",
   "service": "munin",
+  "forwardPorts": [80],
   "portsAttributes": {
     "80": {
       "label": "Web",
