@@ -5,7 +5,10 @@ FROM alpine:edge
 ARG VERSION_ARG="0.0"
     
 # Install packages
-RUN apk --no-cache add \
+RUN set -eu && \
+    apk update && \
+    apk upgrade && \
+    apk --no-cache add \
     coreutils \
     dumb-init \
     findutils \
