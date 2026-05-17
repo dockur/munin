@@ -42,6 +42,11 @@ sudo -u munin -- /usr/sbin/rrdcached \
   -F -j /var/lib/munin/rrdcached-journal/ \
   -m 0660 -l unix:/run/munin/rrdcached.sock \
   -w 1800 -z 1800 -f 3600
+  
+# Wait for rrdcached socket to become available
+until [ -S /run/munin/rrdcached.sock ]; do
+  sleep 0.5
+done
 
 # Generate node list
 [[ ! -z "$NODES" ]] && for NODE in $NODES
