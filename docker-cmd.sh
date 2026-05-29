@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-echo "Munin for Docker v$(</run/version)..."
+echo "Munin for Docker v$(</etc/version)..."
 
 TZ="${TZ:-}"
 NODES="${NODES:-}"
