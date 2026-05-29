@@ -23,7 +23,7 @@ RUN set -eu && \
     sudo \
     ttf-opensans \
     tzdata && \
-  echo "$VERSION_ARG" > /run/version && \
+  echo "$VERSION_ARG" > /etc/version && \
   rm -rf /var/cache/apk/*
 
 # Create the user and group
