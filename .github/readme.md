@@ -54,7 +54,7 @@ docker run -it --rm --name munin -p 80:80 -e "NODES=node1:10.0.0.101 node2:10.0.
 Special thanks to [@aheimsbakk](https://github.com/aheimsbakk), for creating the original project.
 
 ## Stars 🌟
-[![Stars](https://starchart.cc/dockur/munin.svg?variant=adaptive)](https://starchart.cc/dockur/munin)
+[![Stargazers](https://raw.githubusercontent.com/star-stats/stars/refs/heads/data/charts/dockur-munin.svg)](https://github.com/dockur/munin/stargazers)
 
 [build_url]: https://github.com/dockur/munin/
 [hub_url]: https://hub.docker.com/r/dockurr/munin
