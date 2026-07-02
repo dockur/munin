@@ -22,7 +22,7 @@ Container image for a [Munin](https://munin-monitoring.org/) master server.
 
 ## Usage  🐳
 
-##### Via Docker Compose:
+##### Docker Compose:
 
 ```yaml
 services:
@@ -43,7 +43,7 @@ services:
     stop_grace_period: 1m
 ```
 
-##### Via Docker CLI:
+##### Docker CLI:
 
 ```bash
 docker run -it --rm --name munin -p 80:80 -e "NODES=node1:10.0.0.101 node2:10.0.0.102" --stop-timeout 60 docker.io/dockurr/munin
