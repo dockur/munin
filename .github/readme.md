@@ -1,6 +1,6 @@
 <h1 align="center">Munin for Docker<br />
 <div align="center">
-<a href="https://github.com/dockur/munin"><img src="https://raw.githubusercontent.com/dockur/munin/master/.github/logo.jpg" title="Logo" style="max-width:100%;" width="192" /></a>
+<a href="https://github.com/dockur/munin"><img src="https://raw.githubusercontent.com/dockur/munin/master/.github/logo.png" title="Logo" style="max-width:100%;" width="192" /></a>
 </div>
 <div align="center">
 
