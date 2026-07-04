@@ -45,26 +45,6 @@ rm -f /var/run/munin/fastcgi-graph.sock
 rm -f /var/run/munin/fastcgi-html.sock
 
 # Fix permissions
-touch \
-  /var/lib/munin/limits \
-  /var/lib/munin/limits.storable \
-  /var/log/munin/munin-update.log \
-  /var/log/munin/munin-limits.log \
-  /var/log/munin/munin-graph.log \
-  /var/log/munin/munin-html.log \
-  /var/log/munin/munin-cgi-graph.log \
-  /var/log/munin/munin-cgi-html.log
-
-chown munin:munin \
-  /var/lib/munin/limits \
-  /var/lib/munin/limits.storable \
-  /var/log/munin/munin-update.log \
-  /var/log/munin/munin-limits.log \
-  /var/log/munin/munin-graph.log \
-  /var/log/munin/munin-html.log \
-  /var/log/munin/munin-cgi-graph.log \
-  /var/log/munin/munin-cgi-html.log
-
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
 
