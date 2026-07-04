@@ -5,7 +5,7 @@ FROM alpine:edge
 ARG MUNIN_UID=100
 ARG MUNIN_GID=101
 ARG VERSION_ARG="0.0"
-    
+
 RUN <<EOF
 set -eu
 
@@ -30,6 +30,7 @@ apk --no-cache add \
   tzdata \
   shadow
 
+echo "$VERSION_ARG" > /etc/version
 rm -rf /var/cache/apk/*
 
 # Set Munin user and group IDs
@@ -41,9 +42,9 @@ usermod -u "$MUNIN_UID" -g "$MUNIN_GID" munin
 # Set Munin crontab
 sed '/^[^*].*$/d; s/ munin //g' /etc/munin/munin.cron.sample | crontab -u munin -
 
-# Patch Munin RRDTool 1.10 version check
-update_worker="/usr/share/perl5/vendor_perl/Munin/Master/UpdateWorker.pm"
+# Patch Munin RRDTool 1.10 version check and COMMENT escaping
 graph_old="/usr/share/perl5/vendor_perl/Munin/Master/GraphOld.pm"
+update_worker="/usr/share/perl5/vendor_perl/Munin/Master/UpdateWorker.pm"
 
 grep -q '} elsif($RRDs::VERSION < 1\.3){' "$update_worker"
 grep -q 'if ($RRDs::VERSION >= 1\.3){' "$graph_old"
@@ -51,8 +52,20 @@ grep -q 'if ($RRDs::VERSION >= 1\.3){' "$graph_old"
 sed -i 's/} elsif($RRDs::VERSION < 1\.3){/} elsif(0){/' "$update_worker"
 sed -i 's/if ($RRDs::VERSION >= 1\.3){/if (1){/' "$graph_old"
 
+# Patch RRDTool 1.10 stricter COMMENT parsing.
+# RRDTool 1.10 treats unescaped ":" inside COMMENT text as extra arguments.
+grep -q 'RRDs::graph(@rrdcached_params, @complete);' "$graph_old"
+grep -q 'RRDs::graph(@rrdcached_params, @rrd_sum);' "$graph_old"
+
+sed -i '/RRDs::graph(@rrdcached_params, @complete);/i\
+        s/^COMMENT:(.*)$/\"COMMENT:\" . do { my $c = $1; $c =~ s/:/\\\\:/g; $c }/e for @complete;' "$graph_old"
+
+sed -i '/RRDs::graph(@rrdcached_params, @rrd_sum);/i\
+            s/^COMMENT:(.*)$/\"COMMENT:\" . do { my $c = $1; $c =~ s/:/\\\\:/g; $c }/e for @rrd_sum;' "$graph_old"
+
 # Set version number
 echo "$VERSION_ARG" > /etc/version
+
 EOF
 
 # Default nginx.conf
