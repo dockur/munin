@@ -144,9 +144,7 @@ echo "Starting cron..."
 # Munin and logrotate runs in cron, start cron
 crond
 
-echo "Starting webserver..."
+echo "Munin started successfully!"
 
 # Start web-server
 nginx
-
-echo "Munin started successfully!"
