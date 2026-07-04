@@ -42,7 +42,7 @@ usermod -u "$MUNIN_UID" -g "$MUNIN_GID" munin
 # Set Munin crontab
 sed '/^[^*].*$/d; s/ munin //g' /etc/munin/munin.cron.sample | crontab -u munin -
 
-# Patch Munin RRDTool 1.10 version check and COMMENT escaping
+# Patch Munin RRDTool 1.10 version check
 graph_old="/usr/share/perl5/vendor_perl/Munin/Master/GraphOld.pm"
 update_worker="/usr/share/perl5/vendor_perl/Munin/Master/UpdateWorker.pm"
 
@@ -58,10 +58,22 @@ grep -q 'RRDs::graph(@rrdcached_params, @complete);' "$graph_old"
 grep -q 'RRDs::graph(@rrdcached_params, @rrd_sum);' "$graph_old"
 
 sed -i '/RRDs::graph(@rrdcached_params, @complete);/i\
-        s/^COMMENT:(.*)$/\"COMMENT:\" . do { my $c = $1; $c =~ s/:/\\\\:/g; $c }/e for @complete;' "$graph_old"
+        for my $arg (@complete) {\
+            if ($arg =~ /^COMMENT:(.*)$/) {\
+                my $comment = $1;\
+                $comment =~ s/:/\\\\:/g;\
+                $arg = "COMMENT:$comment";\
+            }\
+        }' "$graph_old"
 
 sed -i '/RRDs::graph(@rrdcached_params, @rrd_sum);/i\
-            s/^COMMENT:(.*)$/\"COMMENT:\" . do { my $c = $1; $c =~ s/:/\\\\:/g; $c }/e for @rrd_sum;' "$graph_old"
+            for my $arg (@rrd_sum) {\
+                if ($arg =~ /^COMMENT:(.*)$/) {\
+                    my $comment = $1;\
+                    $comment =~ s/:/\\\\:/g;\
+                    $arg = "COMMENT:$comment";\
+                }\
+            }' "$graph_old"
 
 # Set version number
 echo "$VERSION_ARG" > /etc/version
