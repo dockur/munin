@@ -30,7 +30,6 @@ apk --no-cache add \
   tzdata \
   shadow
 
-echo "$VERSION_ARG" > /etc/version
 rm -rf /var/cache/apk/*
 
 # Set Munin user and group IDs
