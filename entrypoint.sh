@@ -23,10 +23,17 @@ mkdir -p /run/munin
 mkdir -p /var/log/munin
 mkdir -p /var/lib/munin/cgi-tmp
 
+# Remove stale runtime files
+rm -f /run/munin/rrdcached.pid
+rm -f /run/munin/rrdcached.sock
+
 # Fix ownership
 chown munin:munin \
-  /var/log/munin /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
+  /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
   /etc/munin/munin-conf.d /etc/munin/plugin-conf.d
+
+# Fix ownership of existing log files too
+chown -R munin:munin /var/log/munin
 
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
@@ -42,7 +49,7 @@ sudo -u munin -- /usr/sbin/rrdcached \
   -F -j /var/lib/munin/rrdcached-journal/ \
   -m 0660 -l unix:/run/munin/rrdcached.sock \
   -w 1800 -z 1800 -f 3600
-  
+
 # Wait for rrdcached socket to become available
 until [ -S /run/munin/rrdcached.sock ]; do
   sleep 0.5
