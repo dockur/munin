@@ -18,6 +18,8 @@ if [ -n "$TZ" ]; then
 
 fi
 
+echo "Configuring permissions..."
+
 # Make directories before setting permissions
 mkdir -p /run/munin
 mkdir -p /var/log/munin
@@ -29,11 +31,8 @@ rm -f /run/munin/rrdcached.sock
 
 # Fix ownership
 chown munin:munin \
-  /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
+  /var/log/munin /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
   /etc/munin/munin-conf.d /etc/munin/plugin-conf.d
-
-# Fix ownership of existing log files too
-chown -R munin:munin /var/log/munin
 
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
@@ -42,6 +41,8 @@ chown -R munin:munin /usr/share/webapps/munin/html
 sudo -u munin -- mkdir -p /var/lib/munin/rrdcached-journal
 chown munin:munin /var/lib/munin/rrdcached-journal
 
+echo "Starting rrdcached..."
+
 # Start rrdcached
 sudo -u munin -- /usr/sbin/rrdcached \
   -p /run/munin/rrdcached.pid \
@@ -49,6 +50,8 @@ sudo -u munin -- /usr/sbin/rrdcached \
   -F -j /var/lib/munin/rrdcached-journal/ \
   -m 0660 -l unix:/run/munin/rrdcached.sock \
   -w 1800 -z 1800 -f 3600
+
+echo "Waiting for rrdcached socket to become available..."
 
 # Wait for rrdcached socket to become available
 until [ -S /run/munin/rrdcached.sock ]; do
@@ -92,6 +95,8 @@ if [ -n "$NODES" ]; then
 
 fi
 
+echo "Starting fastcgi process..."
+
 # Run once before we start fcgi
 sudo -u munin -- /usr/bin/munin-cron munin
 
@@ -105,6 +110,8 @@ spawn-fcgi -s /var/run/munin/fastcgi-html.sock -U nginx -u munin -g munin -- \
 
 # Munin and logrotate runs in cron, start cron
 crond
+
+echo "Starting webserver..."
 
 # Start web-server
 nginx
