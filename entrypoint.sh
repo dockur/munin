@@ -22,21 +22,27 @@ echo "Configuring permissions..."
 
 # Make directories before setting permissions
 mkdir -p /run/munin
+mkdir -p /var/run/munin
 mkdir -p /var/log/munin
 mkdir -p /var/lib/munin/cgi-tmp
+mkdir -p /var/lib/munin/rrdcached-journal
 
 # Fix ownership of runtime directories
 chown munin:munin \
   /run/munin \
+  /var/run/munin \
   /var/log/munin \
   /var/lib/munin \
   /var/lib/munin/cgi-tmp \
+  /var/lib/munin/rrdcached-journal \
   /etc/munin/munin-conf.d \
   /etc/munin/plugin-conf.d
 
 # Remove stale runtime files
 rm -f /run/munin/rrdcached.pid
 rm -f /run/munin/rrdcached.sock
+rm -f /var/run/munin/fastcgi-graph.sock
+rm -f /var/run/munin/fastcgi-html.sock
 
 # Fix permissions
 touch \
@@ -45,7 +51,9 @@ touch \
   /var/log/munin/munin-update.log \
   /var/log/munin/munin-limits.log \
   /var/log/munin/munin-graph.log \
-  /var/log/munin/munin-html.log
+  /var/log/munin/munin-html.log \
+  /var/log/munin/munin-cgi-graph.log \
+  /var/log/munin/munin-cgi-html.log
 
 chown munin:munin \
   /var/lib/munin/limits \
@@ -53,14 +61,12 @@ chown munin:munin \
   /var/log/munin/munin-update.log \
   /var/log/munin/munin-limits.log \
   /var/log/munin/munin-graph.log \
-  /var/log/munin/munin-html.log
+  /var/log/munin/munin-html.log \
+  /var/log/munin/munin-cgi-graph.log \
+  /var/log/munin/munin-cgi-html.log
 
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
-
-# Prepare for rrdcached
-sudo -u munin -- mkdir -p /var/lib/munin/rrdcached-journal
-chown munin:munin /var/lib/munin/rrdcached-journal
 
 echo "Starting rrdcached..."
 
@@ -114,6 +120,8 @@ if [ -n "$NODES" ]; then
 
   done <<< "$nodes"
 
+  chown munin:munin /etc/munin/munin-conf.d/nodes.conf
+
 fi
 
 echo "Starting Munin..."
@@ -141,5 +149,4 @@ echo "Starting webserver..."
 # Start web-server
 nginx
 
-echo "Munin started succesfully!"
-
+echo "Munin started successfully!"
