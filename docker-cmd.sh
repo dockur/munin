@@ -49,24 +49,41 @@ until [ -S /run/munin/rrdcached.sock ]; do
 done
 
 # Generate node list
-[[ ! -z "$NODES" ]] && for NODE in $NODES
-do
-  NAME=`echo "$NODE" | cut -d ":" -f1`
-  HOST=`echo "$NODE" | cut -d ":" -f2`
-  PORT=`echo "$NODE" | cut -d ":" -f3`
-  if [ ${#PORT} -eq 0 ]; then
-      PORT=4949
-  fi
-  if ! grep -q "$HOST" /etc/munin/munin-conf.d/nodes.conf 2>/dev/null ; then
-    cat << EOF >> /etc/munin/munin-conf.d/nodes.conf
-[$NAME]
-    address $HOST
-    use_node_name yes
-    port $PORT
+if [ -n "$NODES" ]; then
 
-EOF
-  fi
-done
+  nodes="$(printf '%s\n' "$NODES" | tr ',' '\n')"
+
+  while IFS= read -r NODE; do
+
+    [ -z "$NODE" ] && continue
+
+    NAME="${NODE%%:*}"
+    REST="${NODE#*:}"
+    HOST="${REST%%:*}"
+    PORT="${REST#*:}"
+
+    [ "$REST" = "$NODE" ] && HOST=""
+    [ "$PORT" = "$REST" ] && PORT="4949"
+    [ -z "$PORT" ] && PORT="4949"
+
+    if [ -z "$NAME" ] || [ -z "$HOST" ]; then
+      echo "Skipping invalid node definition: $NODE" >&2
+      continue
+    fi
+
+    if ! grep -Fxq "    address $HOST" /etc/munin/munin-conf.d/nodes.conf 2>/dev/null; then
+      {
+        printf '[%s]\n' "$NAME"
+        printf '    address %s\n' "$HOST"
+        printf '    use_node_name yes\n'
+        printf '    port %s\n' "$PORT"
+        printf '\n'
+      } >> /etc/munin/munin-conf.d/nodes.conf
+    fi
+
+  done <<< "$nodes"
+
+fi
 
 # Run once before we start fcgi
 sudo -u munin -- /usr/bin/munin-cron munin
