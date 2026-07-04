@@ -42,10 +42,10 @@ COPY default.conf /etc/nginx/conf.d/
 COPY munin.conf /etc/munin/
 
 # Start script with all processes
-COPY docker-cmd.sh /
+COPY entrypoint.sh /
 
 # Set execute permission
-RUN chmod +x /docker-cmd.sh
+RUN chmod +x /entrypoint.sh
 
 # Logrotate script for munin logs
 COPY munin /etc/logrotate.d/
@@ -66,4 +66,4 @@ HEALTHCHECK --interval=60s --retries=2 --timeout=10s CMD wget -nv -t1 --spider '
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Run start script or what you choose
-CMD ["/bin/bash", "/docker-cmd.sh"]
+CMD ["/bin/bash", "/entrypoint.sh"]
