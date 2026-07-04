@@ -39,15 +39,21 @@ rm -f /run/munin/rrdcached.pid
 rm -f /run/munin/rrdcached.sock
 
 # Fix permissions
-touch /var/lib/munin/limits
-touch /var/log/munin/munin-update.log
+touch \
+  /var/lib/munin/limits \
+  /var/lib/munin/limits.storable \
+  /var/log/munin/munin-update.log \
+  /var/log/munin/munin-limits.log \
+  /var/log/munin/munin-graph.log \
+  /var/log/munin/munin-html.log
 
 chown munin:munin \
   /var/lib/munin/limits \
-  /var/log/munin/munin-update.log
-
-chmod 0644 /var/lib/munin/limits
-chmod 0644 /var/log/munin/munin-update.log
+  /var/lib/munin/limits.storable \
+  /var/log/munin/munin-update.log \
+  /var/log/munin/munin-limits.log \
+  /var/log/munin/munin-graph.log \
+  /var/log/munin/munin-html.log
 
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
@@ -110,10 +116,12 @@ if [ -n "$NODES" ]; then
 
 fi
 
-echo "Starting fastcgi process..."
+echo "Starting Munin..."
 
 # Run once before we start fcgi
 sudo -u munin -- /usr/bin/munin-cron munin
+
+echo "Starting fastcgi process..."
 
 # Spawn fast cgi process for generating graphs on the fly
 spawn-fcgi -s /var/run/munin/fastcgi-graph.sock -U nginx -u munin -g munin -- \
@@ -122,6 +130,8 @@ spawn-fcgi -s /var/run/munin/fastcgi-graph.sock -U nginx -u munin -g munin -- \
 # Spawn fast cgi process for generating html on the fly
 spawn-fcgi -s /var/run/munin/fastcgi-html.sock -U nginx -u munin -g munin -- \
   /usr/share/webapps/munin/cgi/munin-cgi-html
+
+echo "Starting cron..."
 
 # Munin and logrotate runs in cron, start cron
 crond
