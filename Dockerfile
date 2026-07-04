@@ -22,12 +22,21 @@ RUN set -eu && \
     spawn-fcgi \
     sudo \
     ttf-opensans \
-    tzdata && \
+    tzdata \
+    shadow && \
   echo "$VERSION_ARG" > /etc/version && \
   rm -rf /var/cache/apk/*
 
-# Create the user and group
-# RUN addgroup -S munin && adduser -S munin -G munin
+# Set the Munin user and group IDs
+
+ARG MUNIN_UID=100
+ARG MUNIN_GID=101
+
+RUN set -eu; \
+    deluser klogd 2>/dev/null || true; \
+    delgroup klogd 2>/dev/null || true; \
+    groupmod -g "$MUNIN_GID" munin; \
+    usermod -u "$MUNIN_UID" -g "$MUNIN_GID" munin
 
 # Set munin crontab
 RUN sed '/^[^*].*$/d; s/ munin //g' /etc/munin/munin.cron.sample | crontab -u munin - 
