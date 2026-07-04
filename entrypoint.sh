@@ -140,3 +140,6 @@ echo "Starting webserver..."
 
 # Start web-server
 nginx
+
+echo "Munin started succesfully!"
+
