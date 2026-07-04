@@ -25,14 +25,29 @@ mkdir -p /run/munin
 mkdir -p /var/log/munin
 mkdir -p /var/lib/munin/cgi-tmp
 
+# Fix ownership of runtime directories
+chown munin:munin \
+  /run/munin \
+  /var/log/munin \
+  /var/lib/munin \
+  /var/lib/munin/cgi-tmp \
+  /etc/munin/munin-conf.d \
+  /etc/munin/plugin-conf.d
+
 # Remove stale runtime files
 rm -f /run/munin/rrdcached.pid
 rm -f /run/munin/rrdcached.sock
 
-# Fix ownership
+# Fix permissions
+touch /var/lib/munin/limits
+touch /var/log/munin/munin-update.log
+
 chown munin:munin \
-  /var/log/munin /run/munin /var/lib/munin /var/lib/munin/cgi-tmp \
-  /etc/munin/munin-conf.d /etc/munin/plugin-conf.d
+  /var/lib/munin/limits \
+  /var/log/munin/munin-update.log
+
+chmod 0644 /var/lib/munin/limits
+chmod 0644 /var/log/munin/munin-update.log
 
 chmod 755 /usr/share/webapps/munin/html
 chown -R munin:munin /usr/share/webapps/munin/html
