@@ -16,11 +16,13 @@ Container image for a [Munin](https://munin-monitoring.org/) master server.
 
 ## Features ✨
 
-* `rrdcached` is used to be able to handle a large number of nodes.
-
-* `fcgi` is used for generation of graphs on demand and not cron.
-
-* Lightweight Alpine-based image.
+- Provides a Munin master monitoring server
+- Displays monitoring graphs through a web interface
+- Supports monitoring multiple Munin nodes
+- Uses `rrdcached` for better performance
+- Generates graphs on demand with FastCGI
+- Supports custom Munin configuration
+- Lightweight Alpine-based image
 
 ## Usage  🐳
 
