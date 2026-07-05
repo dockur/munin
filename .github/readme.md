@@ -20,6 +20,8 @@ Container image for a [Munin](https://munin-monitoring.org/) master server.
 
 * `fcgi` is used for generation of graphs on demand and not cron.
 
+* Lightweight Alpine-based image.
+
 ## Usage  🐳
 
 ##### Docker Compose:
