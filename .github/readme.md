@@ -34,7 +34,7 @@ services:
     image: dockurr/munin
     container_name: munin
     environment:
-      TZ: "Europe/Amsterdam"
+      TZ: "UTC"
       NODES: "node1:10.0.0.101 node2:10.0.0.102"
     ports:
       - 80:80
