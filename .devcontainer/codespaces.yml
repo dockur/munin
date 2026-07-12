@@ -1,7 +1,7 @@
 services:
   munin:
+    image: dockurr/munin
     container_name: munin
-    image: ghcr.io/dockur/munin
     environment:
       TZ: "UTC"
       NODES: "node1:10.0.0.101 node2:10.0.0.102"
@@ -12,5 +12,5 @@ services:
       - ./log:/var/log/munin
       - ./conf:/etc/munin/munin-conf.d
       - ./plugin:/etc/munin/plugin-conf.d
-    restart: on-failure
+    restart: always
     stop_grace_period: 1m
