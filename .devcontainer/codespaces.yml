@@ -3,7 +3,7 @@ services:
     container_name: munin
     image: ghcr.io/dockur/munin
     environment:
-      TZ: "Europe/Berlin"
+      TZ: "UTC"
       NODES: "node1:10.0.0.101 node2:10.0.0.102"
     ports:
       - 80:80
