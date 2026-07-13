@@ -103,7 +103,8 @@ ENV NODES=""
 EXPOSE 80
 
 # Healthcheck
-HEALTHCHECK --interval=60s --retries=2 --timeout=10s CMD wget -nv -t1 --spider 'http://localhost:80/munin/' || exit 1
+HEALTHCHECK --interval=60s --retries=2 --timeout=10s \
+    CMD ["wget", "-nv", "-t1", "--spider", "http://localhost:80/munin/"]
 
 # Use dumb-init since we run a lot of processes
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
