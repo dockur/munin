@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eu
-
+test
 echo "Munin for Docker v$(</etc/version)..."
 
 TZ="${TZ:-}"
