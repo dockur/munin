@@ -14,6 +14,7 @@ RUN <<EOF
 
   # Install packages
   apk --no-cache add \
+    bash \
     coreutils \
     dumb-init \
     findutils \
@@ -22,12 +23,17 @@ RUN <<EOF
     munin-node \
     nginx \
     perl-cgi-fast \
+    perl-net-snmp \
+    perl-net-ssleay \
+    perl-html-template \
+    perl-io-socket-ssl \
+    perl-io-socket-inet6 \
     procps \
     rrdtool-cached \
     spawn-fcgi \
     sudo \
-    ttf-dejavu \
-    ttf-opensans \
+    font-dejavu \
+    font-opensans \
     tzdata \
     shadow
 
