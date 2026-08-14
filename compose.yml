@@ -4,7 +4,7 @@ services:
     container_name: munin
     environment:
       TZ: "UTC"
-      NODES: "node1:10.0.0.101 node2:10.0.0.102"
+      NODES: "server:10.0.0.101,nas:10.0.0.102"
     ports:
       - 80:80
     volumes:
