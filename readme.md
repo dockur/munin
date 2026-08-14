@@ -35,7 +35,7 @@ services:
     container_name: munin
     environment:
       TZ: "UTC"
-      NODES: "node1:10.0.0.101 node2:10.0.0.102"
+      NODES: "server:10.0.0.101,nas:10.0.0.102"
     ports:
       - 80:80
     volumes:
@@ -50,20 +50,16 @@ services:
 ##### Docker CLI:
 
 ```bash
-docker run -it --rm --name munin -p 80:80 -e "NODES=node1:10.0.0.101 node2:10.0.0.102" --stop-timeout 60 docker.io/dockurr/munin
+docker run -it --rm --name munin -p 80:80 -e "NODES=server:10.0.0.101,nas:10.0.0.102" --stop-timeout 60 docker.io/dockurr/munin
 ```
 
 ### Node configuration
 
-Nodes can be configured using the `NODES` environment variable. Each node uses the format `name:address[:port]`, where `name` is a custom label used to identify the node in Munin and `address` is the hostname or IP address of the machine running `munin-node`.
+Nodes can be configured using the `NODES` environment variable.
+
+Each node uses the format `name:address[:port]`, where `name` is a custom label used to identify the node in Munin and `address` is the hostname or IP address of the machine running `munin-node`.
 
 For example:
-
-```text
-NODES="server:10.0.0.101 nas:10.0.0.102"
-```
-
-Multiple nodes can be separated by spaces or commas, so the following is equivalent:
 
 ```text
 NODES="server:10.0.0.101,nas:10.0.0.102"
