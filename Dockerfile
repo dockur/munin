@@ -26,6 +26,7 @@ RUN <<EOF
     rrdtool-cached \
     spawn-fcgi \
     sudo \
+    ttf-dejavu \
     ttf-opensans \
     tzdata \
     shadow
