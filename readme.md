@@ -53,6 +53,32 @@ services:
 docker run -it --rm --name munin -p 80:80 -e "NODES=node1:10.0.0.101 node2:10.0.0.102" --stop-timeout 60 docker.io/dockurr/munin
 ```
 
+### Node configuration
+
+Nodes can be configured using the `NODES` environment variable. Each node uses the format `name:address[:port]`, where `name` is a custom label used to identify the node in Munin and `address` is the hostname or IP address of the machine running `munin-node`.
+
+For example:
+
+```text
+NODES="server:10.0.0.101 nas:10.0.0.102"
+```
+
+Multiple nodes can be separated by spaces or commas, so the following is equivalent:
+
+```text
+NODES="server:10.0.0.101,nas:10.0.0.102"
+```
+
+Munin uses port `4949` by default. A different port can be specified by adding it after the address:
+
+```text
+NODES="server:10.0.0.101:4950"
+```
+
+Existing configuration files in `/etc/munin/munin-conf.d` are left untouched. This means manually configured nodes, including nodes in an existing `nodes.conf`, are preserved and can be used alongside nodes supplied through the `NODES` environment variable.
+
+For more advanced setups, additional Munin configuration can be placed directly in `/etc/munin/munin-conf.d`.
+
  # Acknowledgements 🙏
  
 Special thanks to [@aheimsbakk](https://github.com/aheimsbakk), for creating the original project.
