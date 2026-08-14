@@ -5,6 +5,7 @@ echo "Munin for Docker v$(</etc/version)..."
 
 TZ="${TZ:-}"
 NODES="${NODES:-}"
+NODES_FILE="/etc/munin/munin-conf.d/nodes.generated.conf"
 
 configureTimezone() {
 
@@ -104,15 +105,13 @@ addNode() {
     return 0
   fi
 
-  if ! grep -Fxq "    address $host" /etc/munin/munin-conf.d/nodes.conf 2>/dev/null; then
-    {
-      printf '[%s]\n' "$name"
-      printf '    address %s\n' "$host"
-      printf '    use_node_name yes\n'
-      printf '    port %s\n' "$port"
-      printf '\n'
-    } >> /etc/munin/munin-conf.d/nodes.conf
-  fi
+  {
+    printf '[%s]\n' "$name"
+    printf '    address %s\n' "$host"
+    printf '    use_node_name yes\n'
+    printf '    port %s\n' "$port"
+    printf '\n'
+  } >> "$NODES_FILE"
 }
 
 configureNodes() {
@@ -120,17 +119,20 @@ configureNodes() {
   local nodes node
 
   # Generate node list
+  rm -f "$NODES_FILE"
+
   if [ -z "$NODES" ]; then
     return 0
   fi
 
-  nodes="$(printf '%s\n' "$NODES" | tr ',' '\n')"
+  : > "$NODES_FILE"
+  nodes="$(printf '%s\n' "$NODES" | tr ',[:space:]' '\n')"
 
   while IFS= read -r node; do
     addNode "$node"
   done <<< "$nodes"
 
-  chown munin:munin /etc/munin/munin-conf.d/nodes.conf
+  chown munin:munin "$NODES_FILE"
 }
 
 runMuninCronOnce() {
