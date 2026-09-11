@@ -114,6 +114,53 @@ addNode() {
   } >> "$NODES_FILE"
 }
 
+hasConfiguredNode() {
+
+  local file
+
+  while IFS= read -r -d '' file; do
+    [ "$file" = "$NODES_FILE" ] && continue
+
+    if awk '
+      FNR == 1 {
+        is_node = 0
+        found = 0
+      }
+
+      {
+        line = $0
+        sub(/[[:space:]]*#.*/, "", line)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+      }
+
+      line == "" {
+        next
+      }
+
+      line ~ /^\[[^]]+\]$/ {
+        section = line
+        sub(/^\[/, "", section)
+        sub(/\]$/, "", section)
+        is_node = section !~ /;$/
+        next
+      }
+
+      is_node {
+        found = 1
+        exit
+      }
+
+      END {
+        exit found ? 0 : 1
+      }
+    ' "$file"; then
+      return 0
+    fi
+  done < <(find -L "${NODES_FILE%/*}" -maxdepth 1 -type f -print0)
+
+  return 1
+}
+
 configureNodes() {
 
   local nodes node
@@ -122,6 +169,17 @@ configureNodes() {
   rm -f "$NODES_FILE"
 
   if [ -z "$NODES" ]; then
+    if hasConfiguredNode; then
+      return 0
+    fi
+
+    {
+      printf '[dummy]\n'
+      printf '    update no\n'
+      printf '\n'
+    } > "$NODES_FILE"
+
+    chown munin:munin "$NODES_FILE"
     return 0
   fi
 
