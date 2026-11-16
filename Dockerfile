@@ -48,39 +48,6 @@ RUN <<EOF
   # Set Munin crontab
   sed '/^[^*].*$/d; s/ munin //g' /etc/munin/munin.cron.sample | crontab -u munin -
 
-  # Patch Munin RRDTool 1.10 version check
-  graph_old="/usr/share/perl5/vendor_perl/Munin/Master/GraphOld.pm"
-  update_worker="/usr/share/perl5/vendor_perl/Munin/Master/UpdateWorker.pm"
-
-  grep -q '} elsif($RRDs::VERSION < 1\.3){' "$update_worker"
-  grep -q 'if ($RRDs::VERSION >= 1\.3){' "$graph_old"
-
-  sed -i 's/} elsif($RRDs::VERSION < 1\.3){/} elsif(0){/' "$update_worker"
-  sed -i 's/if ($RRDs::VERSION >= 1\.3){/if (1){/' "$graph_old"
-
-  # Patch RRDTool 1.10 stricter COMMENT parsing.
-  # RRDTool 1.10 treats unescaped ":" inside COMMENT text as extra arguments.
-  grep -q 'RRDs::graph(@rrdcached_params, @complete);' "$graph_old"
-  grep -q 'RRDs::graph(@rrdcached_params, @rrd_sum);' "$graph_old"
-
-  sed -i '/RRDs::graph(@rrdcached_params, @complete);/i\
-          for my $arg (@complete) {\
-              if ($arg =~ /^COMMENT:(.*)$/) {\
-                  my $comment = $1;\
-                  $comment =~ s/:/\\\\:/g;\
-                  $arg = "COMMENT:$comment";\
-              }\
-          }' "$graph_old"
-
-  sed -i '/RRDs::graph(@rrdcached_params, @rrd_sum);/i\
-              for my $arg (@rrd_sum) {\
-                  if ($arg =~ /^COMMENT:(.*)$/) {\
-                      my $comment = $1;\
-                      $comment =~ s/:/\\\\:/g;\
-                      $arg = "COMMENT:$comment";\
-                  }\
-              }' "$graph_old"
-
   # Set version number
   echo "$VERSION_ARG" > /etc/version
 EOF
